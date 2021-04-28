@@ -72,7 +72,7 @@ class LombokPlugin : PluginAdapter() {
         topLevelClass: TopLevelClass,
         introspectedTable: IntrospectedTable
     ): Boolean {
-        addAnnotations(topLevelClass, introspectedTable)
+        addAnnotations(topLevelClass)
         return super.modelBaseRecordClassGenerated(topLevelClass, introspectedTable)
     }
 
@@ -80,7 +80,7 @@ class LombokPlugin : PluginAdapter() {
         topLevelClass: TopLevelClass,
         introspectedTable: IntrospectedTable
     ): Boolean {
-        addAnnotations(topLevelClass, introspectedTable)
+        addAnnotations(topLevelClass)
         return super.modelPrimaryKeyClassGenerated(topLevelClass, introspectedTable)
     }
 
@@ -88,7 +88,7 @@ class LombokPlugin : PluginAdapter() {
         topLevelClass: TopLevelClass,
         introspectedTable: IntrospectedTable
     ): Boolean {
-        addAnnotations(topLevelClass, introspectedTable)
+        addAnnotations(topLevelClass)
         return super.modelRecordWithBLOBsClassGenerated(topLevelClass, introspectedTable)
     }
 
@@ -122,17 +122,14 @@ class LombokPlugin : PluginAdapter() {
         return true
     }
 
-    private fun addAnnotations(topLevelClass: TopLevelClass, introspectedTable: IntrospectedTable) {
+    private fun addAnnotations(topLevelClass: TopLevelClass) {
         for (annotation in annotations!!) {
-            // @Data
+            addAnnotation(topLevelClass, annotation)
             if (annotation.startsWith("@Data")) {
-                addAnnotation(topLevelClass, annotation)
-                if (topLevelClass.superClass != null) {
+                if (topLevelClass.superClass.isPresent) {
                     addAnnotation(topLevelClass, "@EqualsAndHashCode(callSuper = true)")
                     addAnnotation(topLevelClass, "@ToString(callSuper = true)")
                 }
-            } else {
-                addAnnotation(topLevelClass, annotation)
             }
         }
     }
